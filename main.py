@@ -18,32 +18,39 @@ class Generator():
     def __init__(self):
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Dungeons Generator")
+        self.grid = GRID
         self.new_map(10, 0)
         self.main_loop()
 
+
     def new_map(self, path_length, side_rooms):
-        self.screen.fill((255, 255, 255))
-        column = 8
+        col = 8
         row = 8
         for n in range(path_length):
             while True:
                 direction = random.randint(0, 3)
                 if direction == 0:
-                    column -= 1
+                    col -= 1
                 elif direction == 1:
                     row -= 1
                 elif direction == 2:
-                    column += 1
+                    col += 1
                 elif direction == 3:
                     row += 1
 
-                if GRID[row][column]:
+                if GRID[row][col]:
                     continue
                 else:
-                    GRID[row][column] = 1
+                    GRID[row][col] = 1
                     break
 
-            pygame.draw.rect(self.screen, (0,0,0), (column * TILL_SIZE, row * TILL_SIZE, TILL_SIZE, TILL_SIZE))
+
+    def render(self):
+        self.screen.fill((255, 255, 255))
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.grid[row][col]:
+                    pygame.draw.rect(self.screen, (0,0,0), (col * TILL_SIZE, row * TILL_SIZE, TILL_SIZE, TILL_SIZE))
         pygame.display.flip()
 
 
@@ -53,6 +60,9 @@ class Generator():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+            
+            self.render()
+            pygame.time.Clock().tick(60)
 
 
 if __name__ == "__main__":
