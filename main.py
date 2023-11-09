@@ -28,6 +28,7 @@ class Generator():
         self.side_rooms = 2
         self.slider1_in_use = False
         self.slider2_in_use = False
+        self.generate_button = pygame.Rect(20, 130, 100, 30)
         self.new_map(self.path_length, self.side_rooms)
         self.main_loop()
 
@@ -35,6 +36,7 @@ class Generator():
     def new_map(self, path_length, side_rooms):
         col = 8
         row = 8
+        self.grid = [[0 for _ in range(COLS)] for _ in range(ROWS)]
         for n in range(path_length):
             while True:
                 direction = random.randint(0, 3)
@@ -47,10 +49,10 @@ class Generator():
                 elif direction == 3:
                     row += 1
 
-                if GRID[row][col]:
+                if self.grid[row][col]:
                     continue
                 else:
-                    GRID[row][col] = 1
+                    self.grid[row][col] = 1
                     break
 
 
@@ -74,6 +76,10 @@ class Generator():
         pygame.draw.rect(self.screen, (100,100,100), (20, 90, 200, 20))
         button_x = int(20 + (self.side_rooms - MIN_ROOMS) / (MAX_ROOMS - MIN_ROOMS) * 200 - 20 / 2)
         pygame.draw.rect(self.screen, (0,0,0), (button_x, 90, 20, 20))
+        pygame.draw.rect(self.screen, (100, 100, 100), self.generate_button)
+        text = self.font.render("Generate", True, (255,255,255))
+        text_rect = text.get_rect(center=self.generate_button.center)
+        self.screen.blit(text, text_rect)
 
         pygame.display.flip()
 
@@ -85,7 +91,9 @@ class Generator():
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if 20 <= event.pos[0] <= 20 + 200 and 40 <= event.pos[1] <= 40 + 20:
+                    if self.generate_button.collidepoint(event.pos):
+                        self.new_map(self.path_length, self.side_rooms)
+                    elif 20 <= event.pos[0] <= 20 + 200 and 40 <= event.pos[1] <= 40 + 20:
                         self.slider1_in_use = True
                     elif 20 <= event.pos[0] <= 20 + 200 and 90 <= event.pos[1] <= 90 + 20:
                         self.slider2_in_use = True
