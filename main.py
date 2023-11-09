@@ -66,6 +66,7 @@ class Generator():
                     pygame.draw.rect(self.screen, (0,0,0), (col * TILL_SIZE, row * TILL_SIZE, TILL_SIZE, TILL_SIZE))
 
         # render menu
+        pygame.draw.rect(self.screen, (200,200,200), (0, 0, 240, 180))
         text = self.font.render(f"Path length: {self.path_length}", True, (0,0,0))
         self.screen.blit(text, (20, 20))
         pygame.draw.rect(self.screen, (100,100,100), (20, 40, 200, 20))
@@ -77,7 +78,7 @@ class Generator():
         button_x = int(20 + (self.side_rooms - MIN_ROOMS) / (MAX_ROOMS - MIN_ROOMS) * 200 - 20 / 2)
         pygame.draw.rect(self.screen, (0,0,0), (button_x, 90, 20, 20))
         pygame.draw.rect(self.screen, (100, 100, 100), self.generate_button)
-        text = self.font.render("Generate", True, (255,255,255))
+        text = self.font.render("Generate", True, (0,0,0))
         text_rect = text.get_rect(center=self.generate_button.center)
         self.screen.blit(text, text_rect)
 
