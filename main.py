@@ -1,21 +1,34 @@
 import pygame
 import sys
 import random
+from pygame.math import Vector2
 
 # Initialize Pygame
 pygame.init()
 
 # Config
-WINDOW_WIDTH = 640
-WINDOW_HEIGHT = 480
-TILL_SIZE = 32
-ROWS = WINDOW_HEIGHT // TILL_SIZE
-COLS = WINDOW_WIDTH // TILL_SIZE
-GRID = [[0 for _ in range(COLS)] for _ in range(ROWS)]
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 960
+TILL_SIZE = 64
 MIN_PATH = 4
 MAX_PATH = 20
 MIN_ROOMS = 0
 MAX_ROOMS = 20
+
+
+class Room(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.position = Vector2(x, y)
+        self.left_room = False
+        self.top_room = False
+        self.right_room = False
+        self.bottom_room = False
+        self.image = pygame.Surface((TILL_SIZE, TILL_SIZE))
+        self.image.fill((100, 100, 100))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
 
 class Generator():
@@ -23,7 +36,7 @@ class Generator():
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Dungeons Generator")
         self.font = pygame.font.Font(None, 24)
-        self.grid = GRID
+        self.rooms = pygame.sprite.Group()
         self.path_length = 10
         self.side_rooms = 2
         self.slider1_in_use = False
@@ -34,36 +47,17 @@ class Generator():
 
 
     def new_map(self, path_length, side_rooms):
-        col = 8
-        row = 8
-        self.grid = [[0 for _ in range(COLS)] for _ in range(ROWS)]
-        for n in range(path_length):
-            while True:
-                direction = random.randint(0, 3)
-                if direction == 0:
-                    col -= 1
-                elif direction == 1:
-                    row -= 1
-                elif direction == 2:
-                    col += 1
-                elif direction == 3:
-                    row += 1
-
-                if self.grid[row][col]:
-                    continue
-                else:
-                    self.grid[row][col] = 1
-                    break
+        room = Room(512, 512)
+        self.rooms.add(room)
+        room = Room(576, 576)
+        self.rooms.add(room)
 
 
     def render(self):
         self.screen.fill((255, 255, 255))
 
         # render map
-        for row in range(ROWS):
-            for col in range(COLS):
-                if self.grid[row][col]:
-                    pygame.draw.rect(self.screen, (0,0,0), (col * TILL_SIZE, row * TILL_SIZE, TILL_SIZE, TILL_SIZE))
+        self.rooms.draw(self.screen)
 
         # render menu
         pygame.draw.rect(self.screen, (200,200,200), (0, 0, 240, 180))
