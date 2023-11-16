@@ -132,6 +132,42 @@ class Generator():
                     self.map.rooms.append(new_room)
                     break
 
+        for n in range(side_rooms):
+            while True:
+                previous_room = ''
+                parent_room = random.choice(self.map.rooms)
+                x_index = parent_room.position.x
+                y_index = parent_room.position.y
+                direction = random.choice(['left', 'right', 'up', 'down'])
+                if direction == previous_room:
+                    continue
+                elif direction == 'left':
+                    x_index -= 1
+                    previous_room = 'right'
+                elif direction == 'right':
+                    x_index += 1
+                    previous_room = 'left'
+                elif direction == 'up':
+                    y_index -= 1
+                    previous_room = 'down'
+                elif direction == 'down':
+                    y_index += 1
+                    previous_room = 'up'
+
+                new_room = Room(x_index, y_index)
+
+                already_exists = False
+                for room in self.map.rooms:
+                    if room.position == new_room.position:
+                        already_exists = True
+                        break
+
+                if already_exists:
+                    continue
+                else:
+                    self.map.rooms.append(new_room)
+                    break
+
         self.map.init_walls()
 
 
