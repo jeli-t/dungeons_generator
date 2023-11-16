@@ -22,10 +22,10 @@ MAX_ROOMS = 20
 class Room():
     def __init__(self, x, y):
         self.position = Vector2(x, y) # relative to other rooms
-        self.left_door = True
-        self.top_door = True
-        self.right_door = True
-        self.bottom_door = True
+        self.left_door = False
+        self.top_door = False
+        self.right_door = False
+        self.bottom_door = False
         self.rect = pygame.Rect(0, 0, TILL_SIZE, TILL_SIZE)
 
 
@@ -104,28 +104,22 @@ class Generator():
 
     def new_map(self, path_length, side_rooms):
         self.map.rooms = []
-        x_index = 1
-        y_index = 1
-        previous_room = 'left'
-        self.map.rooms.append(Room(x_index, y_index))
+        x_index = 0
+        y_index = 0
+        previous_room = Room(x_index, y_index)
+        self.map.rooms.append(previous_room)
 
-        for n in range(path_length - 1):
+        for i in range(path_length - 1):
             while True:
                 direction = random.choice(['left', 'right', 'up', 'down'])
-                if direction == previous_room:
-                    continue
-                elif direction == 'left':
+                if direction == 'left':
                     x_index -= 1
-                    previous_room = 'right'
                 elif direction == 'right':
                     x_index += 1
-                    previous_room = 'left'
                 elif direction == 'up':
                     y_index -= 1
-                    previous_room = 'down'
                 elif direction == 'down':
                     y_index += 1
-                    previous_room = 'up'
 
                 new_room = Room(x_index, y_index)
 
@@ -136,8 +130,29 @@ class Generator():
                         break
 
                 if already_exists:
+                    if direction == 'left':
+                        x_index += 1
+                    elif direction == 'right':
+                        x_index -= 1
+                    elif direction == 'up':
+                        y_index += 1
+                    elif direction == 'down':
+                        y_index -= 1
                     continue
                 else:
+                    if direction == 'left':
+                        previous_room.left_door = True
+                        new_room.right_door = True
+                    elif direction == 'right':
+                        previous_room.right_door = True 
+                        new_room.left_door = True
+                    elif direction == 'up':
+                        previous_room.top_door = True
+                        new_room.bottom_door = True
+                    elif direction == 'down':
+                        previous_room.bottom_door = True
+                        new_room.top_door = True
+                    previous_room = new_room
                     self.map.rooms.append(new_room)
                     break
 
