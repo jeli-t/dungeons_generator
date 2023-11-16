@@ -33,8 +33,20 @@ class Map():
     def __init__(self):
         self.rooms = []
         self.walls = []
-        self.x_offset = 6 * TILL_SIZE
-        self.y_offset = 6 * TILL_SIZE
+        self.x_offset = 0
+        self.y_offset = 0
+
+    def center(self):
+        x = 0
+        y = 0
+
+        for room in self.rooms:
+            x += room.position.x
+            y += room.position.y
+
+        screen_center = Vector2(WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+        self.x_offset = screen_center.x - x / len(self.rooms) * TILL_SIZE
+        self.y_offset = screen_center.y - y / len(self.rooms) * TILL_SIZE
 
 
     def init_rooms(self):
@@ -192,6 +204,7 @@ class Generator():
                     self.map.rooms.append(new_room)
                     break
 
+        self.map.center()
         self.map.init_rooms()
         self.map.init_walls()
 
