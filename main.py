@@ -21,11 +21,12 @@ MAX_ROOMS = 20
 
 class Room():
     def __init__(self, x, y):
-        self.position = Vector2(x, y)
+        self.position = Vector2(x, y) # relative to other rooms
         self.left_door = True
         self.top_door = True
         self.right_door = True
         self.bottom_door = True
+        self.rect = pygame.Rect(0, 0, TILL_SIZE, TILL_SIZE)
 
 
 class Map():
@@ -34,6 +35,13 @@ class Map():
         self.walls = []
         self.x_offset = 6 * TILL_SIZE
         self.y_offset = 6 * TILL_SIZE
+
+
+    def init_rooms(self):
+        for room in self.rooms:
+            room.rect.x = room.position.x * TILL_SIZE + self.x_offset
+            room.rect.y = room.position.y * TILL_SIZE + self.y_offset
+
 
     def init_walls(self):
         self.walls = []
@@ -71,9 +79,10 @@ class Map():
                 wall = pygame.Rect(room.position.x * TILL_SIZE + self.x_offset, room.position.y * TILL_SIZE + self.y_offset + TILL_SIZE, TILL_SIZE + WALL_THICKNES, WALL_THICKNES)
                 self.walls.append(wall)
 
+
     def draw(self, screen):
         for room in self.rooms:
-            pygame.draw.rect(screen, TILL_COLOR, (room.position.x * TILL_SIZE + self.x_offset, room.position.y * TILL_SIZE + self.y_offset, TILL_SIZE, TILL_SIZE))
+            pygame.draw.rect(screen, TILL_COLOR, room.rect)
         for wall in self.walls:
             pygame.draw.rect(screen, WALL_COLOR, wall)
 
@@ -168,6 +177,7 @@ class Generator():
                     self.map.rooms.append(new_room)
                     break
 
+        self.map.init_rooms()
         self.map.init_walls()
 
 
