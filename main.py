@@ -176,25 +176,18 @@ class Generator():
 
         for n in range(side_rooms):
             while True:
-                previous_room = ''
                 parent_room = random.choice(self.map.rooms)
                 x_index = parent_room.position.x
                 y_index = parent_room.position.y
                 direction = random.choice(['left', 'right', 'up', 'down'])
-                if direction == previous_room:
-                    continue
-                elif direction == 'left':
+                if direction == 'left':
                     x_index -= 1
-                    previous_room = 'right'
                 elif direction == 'right':
                     x_index += 1
-                    previous_room = 'left'
                 elif direction == 'up':
                     y_index -= 1
-                    previous_room = 'down'
                 elif direction == 'down':
                     y_index += 1
-                    previous_room = 'up'
 
                 new_room = Room(x_index, y_index)
 
@@ -205,10 +198,31 @@ class Generator():
                         break
 
                 if already_exists:
+                    if direction == 'left':
+                        x_index += 1
+                    elif direction == 'right':
+                        x_index -= 1
+                    elif direction == 'up':
+                        y_index += 1
+                    elif direction == 'down':
+                        y_index -= 1
                     continue
                 else:
+                    if direction == 'left':
+                        parent_room.left_door = True
+                        new_room.right_door = True
+                    elif direction == 'right':
+                        parent_room.right_door = True 
+                        new_room.left_door = True
+                    elif direction == 'up':
+                        parent_room.top_door = True
+                        new_room.bottom_door = True
+                    elif direction == 'down':
+                        parent_room.bottom_door = True
+                        new_room.top_door = True
                     self.map.rooms.append(new_room)
                     break
+
 
         self.map.center()
         self.map.init_rooms()
