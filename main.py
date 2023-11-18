@@ -35,6 +35,9 @@ class Map():
         self.walls = []
         self.x_offset = 0
         self.y_offset = 0
+        self.entry = None
+        self.exit = None
+
 
     def center(self):
         x = 0
@@ -118,8 +121,10 @@ class Generator():
         self.map.rooms = []
         x_index = 0
         y_index = 0
-        previous_room = Room(x_index, y_index)
-        self.map.rooms.append(previous_room)
+        first_room = Room(x_index, y_index)
+        self.map.rooms.append(first_room)
+        self.map.entry = first_room
+        previous_room = first_room
 
         for i in range(path_length - 1):
             while True:
@@ -166,6 +171,7 @@ class Generator():
                         new_room.top_door = True
                     previous_room = new_room
                     self.map.rooms.append(new_room)
+                    self.map.exit = new_room
                     break
 
         for n in range(side_rooms):
@@ -214,6 +220,14 @@ class Generator():
 
         # render map
         self.map.draw(self.screen)
+
+        # mark entry and exit
+        first_room = self.map.entry
+        entry_marker = [(first_room.rect.x + (TILL_SIZE/2), first_room.rect.y + (TILL_SIZE/4)), (first_room.rect.x + (TILL_SIZE/4), first_room.rect.y + (TILL_SIZE-(TILL_SIZE/4))), (first_room.rect.x + TILL_SIZE - (TILL_SIZE/4), first_room.rect.y + (TILL_SIZE-(TILL_SIZE/4)))]
+        pygame.draw.polygon(self.screen, (255, 0, 0), entry_marker)
+        last_room = self.map.exit
+        exit_marker = [(last_room.rect.x + (TILL_SIZE/2), last_room.rect.y + (TILL_SIZE/4)), (last_room.rect.x + (TILL_SIZE/4), last_room.rect.y + (TILL_SIZE-(TILL_SIZE/4))), (last_room.rect.x + TILL_SIZE - (TILL_SIZE/4), last_room.rect.y + (TILL_SIZE-(TILL_SIZE/4)))]
+        pygame.draw.polygon(self.screen, (255, 255, 0), exit_marker)
 
         # render menu
         pygame.draw.rect(self.screen, (200,200,200), (0, 0, 240, 180))
